@@ -12,8 +12,21 @@ const { main } = page.create();
 
 const keyboard = new Keyboard({ id: 'keyboard', parentContainer: main });
 keyboard.create();
+
 document.addEventListener('keydown', (e) => {
   /* eslint-disable no-console */
   console.log(e);
   /* eslint-enable no-console */
+  keyboard.keyDown({
+    code: e.code, altKey: e.altKey, ctrlKey: e.ctrlKey, shiftKey: e.shiftKey, repeat: e.repeat,
+  });
+});
+
+document.addEventListener('keyup', (e) => {
+  /* eslint-disable no-console */
+  console.log(e);
+  /* eslint-enable no-console */
+  keyboard.keyUp({
+    code: e.code, altKey: e.altKey, ctrlKey: e.ctrlKey, shiftKey: e.shiftKey,
+  });
 });

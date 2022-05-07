@@ -215,7 +215,7 @@ export default [
     size: 'wide',
   },
   {
-    code: 'KeZ',
+    code: 'KeyZ',
     key: 'Z',
     size: 'standard',
   },

@@ -58,7 +58,7 @@ body {
       background-color: $color-bkg-hover;
     }
 
-    &:active {
+    &.active {
       box-shadow: 0 1px $color-shadow;
       transform: translateY(3px);
     }

@@ -15,6 +15,7 @@ export default class Key {
     this.key = key;
     this.size = size;
     this.parentContainer = parentContainer;
+    this.button = null;
   }
 
   /**
@@ -27,6 +28,41 @@ export default class Key {
     key.classList.add('key', `${this.size}`);
     key.innerText = this.key;
     this.parentContainer.appendChild(key);
+    this.button = key;
     return key;
+  }
+
+  /**
+   * Call a virtual button press
+   * @param {Object} key - the virtual key
+   * @param {Boolean} key.altKey - ALT key flag
+   * @param {Boolean} key.ctrlKey - CTRL key flag
+   * @param {Boolean} key.shiftKey - SHIFT key flag
+   * @param {Boolean} key.repeat - repeated key flag
+   */
+  keyDown({
+    altKey, ctrlKey, shiftKey, repeat,
+  }) {
+    this.button.classList.add('active');
+    this.altKey = altKey;
+    this.ctrlKey = ctrlKey;
+    this.shiftKey = shiftKey;
+    this.repeat = repeat;
+  }
+
+  /**
+   * Call a virtual button up
+   * @param {Object} key - the virtual key
+   * @param {Boolean} key.altKey - ALT key flag
+   * @param {Boolean} key.ctrlKey - CTRL key flag
+   * @param {Boolean} key.shiftKey - SHIFT key flag
+   */
+  keyUp({
+    altKey, ctrlKey, shiftKey,
+  }) {
+    this.button.classList.remove('active');
+    this.altKey = altKey;
+    this.ctrlKey = ctrlKey;
+    this.shiftKey = shiftKey;
   }
 }

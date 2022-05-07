@@ -12,7 +12,8 @@ const { main } = page.create();
 
 const keyboard = new Keyboard({ id: 'keyboard', parentContainer: main });
 keyboard.create();
-
-// document.addEventListener('keydown', (e) => {
-//   console.log(e);
-// });
+document.addEventListener('keydown', (e) => {
+  /* eslint-disable no-console */
+  console.log(e);
+  /* eslint-enable no-console */
+});

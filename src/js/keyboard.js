@@ -1,4 +1,5 @@
 import Key from './key';
+import keyCodesObjs from './keycodes';
 
 export default class Keyboard {
   /**
@@ -27,12 +28,11 @@ export default class Keyboard {
   }
 
   #createKeys() {
-    // test code
-    for (let i = 1; i < 11; i += 1) {
+    keyCodesObjs.forEach((item) => {
       const key = new Key({
-        code: i, key: i, size: 'standard', parentContainer: this.container,
+        code: item.code, key: item.key, size: item.size, parentContainer: this.container,
       });
       key.create();
-    }
+    });
   }
 }

@@ -1,14 +1,16 @@
+import Key from './key';
+
 export default class Keyboard {
   /**
    * Represents a virtual keyboard
    * @constructor
    * @param {Object} keyboard - the virtual keyboard
    * @param {String} keyboard.id - DOM element.id
-   * @param {HTMLElement} keyboard.container - DOM parent element
+   * @param {HTMLElement} keyboard.parentContainer - DOM parent element
    */
-  constructor({ id, container }) {
+  constructor({ id, parentContainer }) {
     this.id = id;
-    this.container = container;
+    this.parentContainer = parentContainer;
   }
 
   /**
@@ -18,7 +20,19 @@ export default class Keyboard {
   create() {
     const keyboard = document.createElement('div');
     keyboard.id = this.id;
-    this.container.appendChild(keyboard);
+    this.parentContainer.appendChild(keyboard);
+    this.container = keyboard;
+    this.#createKeys();
     return keyboard;
+  }
+
+  #createKeys() {
+    // test code
+    for (let i = 1; i < 11; i += 1) {
+      const key = new Key({
+        code: i, key: i, size: 'standard', parentContainer: this.container,
+      });
+      key.create();
+    }
   }
 }

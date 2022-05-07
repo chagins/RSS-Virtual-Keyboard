@@ -10,5 +10,9 @@ document.body.appendChild(container);
 const page = new Page(container);
 const { main } = page.create();
 
-const keyboard = new Keyboard({ id: 'keyboard', container: main });
+const keyboard = new Keyboard({ id: 'keyboard', parentContainer: main });
 keyboard.create();
+
+// document.addEventListener('keydown', (e) => {
+//   console.log(e);
+// });

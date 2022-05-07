@@ -16,7 +16,7 @@ const config = {
   devtool: 'source-map',
   output: {
     filename: 'index.js',
-    // clean: true,
+    clean: true,
     path: path.resolve(__dirname, 'dist'),
   },
   devServer: {
@@ -30,6 +30,9 @@ const config = {
       title: 'RSS Virtual Keyboard',
     }),
     new ESLintPlugin(),
+    // new MiniCssExtractPlugin({
+    //   filename: '[name].css',
+    // }),
   ],
   module: {
     rules: [
@@ -59,7 +62,7 @@ const config = {
         test: /\.(ico)$/i,
         type: 'asset/resource',
         generator: {
-          filename: 'assets/[name][ext][query]',
+          filename: 'assets/[name][ext]',
         },
       },
 
@@ -74,7 +77,7 @@ module.exports = () => {
     config.mode = 'production';
 
     config.plugins.push(new MiniCssExtractPlugin({
-      filename: './assets/styles/[name].css',
+      filename: './styles/[name].[hash].css',
     }));
   } else {
     config.mode = 'development';

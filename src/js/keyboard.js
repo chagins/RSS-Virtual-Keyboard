@@ -81,6 +81,7 @@ export default class Keyboard {
       case 'Shift':
         this.switchToUpperCase();
         this.keyboard.classList.add('upper');
+        this.switchOnShiftKeys();
         break;
       case 'CapsLock':
         if (this.isCapsLockOn) {
@@ -103,6 +104,15 @@ export default class Keyboard {
       const btnKey = this.keys.get(key);
       if (btnKey.type === 'text') {
         btnKey.key = btnKey.key.toUpperCase();
+      }
+    });
+  }
+
+  switchOnShiftKeys() {
+    this.keys.forEach((value, key) => {
+      const btnKey = this.keys.get(key);
+      if (btnKey.shiftAnalogue) {
+        btnKey.button.innerText = btnKey.shiftAnalogue;
       }
     });
   }
@@ -137,6 +147,7 @@ export default class Keyboard {
       case 'Shift':
         this.switchToLowerCase();
         this.keyboard.classList.remove('upper');
+        this.switchOffShiftKeys();
         break;
       case 'Alt':
         if (key.ctrlKey) {
@@ -168,6 +179,15 @@ export default class Keyboard {
       const btnKey = this.keys.get(key);
       if (btnKey.type === 'text') {
         btnKey.key = btnKey.key.toLowerCase();
+      }
+    });
+  }
+
+  switchOffShiftKeys() {
+    this.keys.forEach((value, key) => {
+      const btnKey = this.keys.get(key);
+      if (btnKey.shiftAnalogue) {
+        btnKey.button.innerText = btnKey.key;
       }
     });
   }
@@ -221,6 +241,7 @@ export default class Keyboard {
         key: item.key,
         size: item.size,
         type: item.type,
+        shiftAnalogue: item.shiftAnalogue,
         parentContainer: this.keyboard,
       });
       key.create();

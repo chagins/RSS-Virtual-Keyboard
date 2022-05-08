@@ -342,6 +342,12 @@ export default [
     type: 'control',
   },
   {
+    code: 'Language',
+    key: '🌐',
+    size: 'standard',
+    type: 'lang',
+  },
+  {
     code: 'AltLeft',
     key: 'Alt',
     size: 'standard',

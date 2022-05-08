@@ -1,5 +1,6 @@
 import Key from './key';
-import keyCodesObjs from './keycodes';
+import keyCodesEn from './keycodes_en';
+import keyCodesRu from './keycodes_ru';
 import TextArea from './textarea';
 
 export default class Keyboard {
@@ -15,6 +16,8 @@ export default class Keyboard {
     this.parentContainer = parentContainer;
     this.keys = new Map();
     this.keyboard = null;
+    this.isCapsLockOn = false;
+    this.language = null;
   }
 
   /**
@@ -26,11 +29,24 @@ export default class Keyboard {
     keyboard.id = this.id;
     this.parentContainer.appendChild(keyboard);
     this.keyboard = keyboard;
-    this.isCapsLockOn = false;
-    this.#createKeys();
+    this.loadStorageLang();
+    if (this.language === 'EN') this.#createKeys(keyCodesEn);
+    if (this.language === 'RU') this.#createKeys(keyCodesRu);
     this.keyboard.addEventListener('mousedown', this.keyVirtualDown.bind(this));
     this.keyboard.addEventListener('mouseup', this.keyVirtualUp.bind(this));
     return keyboard;
+  }
+
+  loadStorageLang() {
+    if (localStorage.getItem('RSS_LANGUAGE')) {
+      this.language = localStorage.getItem('RSS_LANGUAGE');
+    } else {
+      this.language = 'EN';
+    }
+  }
+
+  saveStorageLang() {
+    localStorage.setItem('RSS_LANGUAGE', this.language);
   }
 
   /**
@@ -52,16 +68,16 @@ export default class Keyboard {
       key.keyDown({
         altKey, ctrlKey, shiftKey, repeat,
       });
-      this.keyDownSpecial(key.key);
+      this.keyDownSpecial(key);
     }
   }
 
   /**
    * Processing special keys down
-   * @param {String} key - the virtual key (Shift, CapsLock and etc)
+   * @param {Object} key - the virtual key (Shift, CapsLock and etc)
    */
   keyDownSpecial(key) {
-    switch (key) {
+    switch (key.key) {
       case 'Shift':
         this.switchToUpperCase();
         this.keyboard.classList.add('upper');
@@ -108,19 +124,39 @@ export default class Keyboard {
       key.keyUp({
         altKey, ctrlKey, shiftKey,
       });
-      this.keyUpSpecial(key.key);
+      this.keyUpSpecial(key);
     }
   }
 
   /**
    * Processing special keys up
-   * @param {String} key - the virtual key (Shift, CapsLock and etc)
+   * @param {Object} key - the virtual key (Shift, CapsLock and etc)
    */
   keyUpSpecial(key) {
-    switch (key) {
+    switch (key.key) {
       case 'Shift':
         this.switchToLowerCase();
         this.keyboard.classList.remove('upper');
+        break;
+      case 'Alt':
+        if (key.ctrlKey) {
+          this.switchLanguage();
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
+  switchLanguage() {
+    switch (this.language) {
+      case 'EN':
+        this.language = 'RU';
+        this.#createKeys(keyCodesRu);
+        break;
+      case 'RU':
+        this.language = 'EN';
+        this.#createKeys(keyCodesEn);
         break;
       default:
         break;
@@ -148,7 +184,7 @@ export default class Keyboard {
           break;
         case 'control':
           TextArea.controlInput(code);
-          this.keyDownSpecial(key.key);
+          this.keyDownSpecial(key);
           break;
         default:
           break;
@@ -158,17 +194,28 @@ export default class Keyboard {
 
   keyVirtualUp(event) {
     const code = event.target.id;
-    if (code) {
-      const key = this.keys.get(code);
-      if (key) {
-        key.keyUp({});
-        this.keyUpSpecial(key.key);
+    if (!code) return;
+    const key = this.keys.get(code);
+    if (key) {
+      switch (key.type) {
+        case 'lang':
+          this.switchLanguage();
+          break;
+        case key.type:
+          key.keyUp({});
+          this.keyUpSpecial(key);
+          break;
+        default:
+          break;
       }
     }
   }
 
-  #createKeys() {
-    keyCodesObjs.forEach((item) => {
+  #createKeys(keyCodesLang) {
+    const keyCodes = keyCodesLang;
+    this.keys.clear();
+    this.keyboard.innerHTML = '';
+    keyCodes.forEach((item) => {
       const key = new Key({
         code: item.code,
         key: item.key,
@@ -179,5 +226,11 @@ export default class Keyboard {
       key.create();
       this.keys.set(key.code, key);
     });
+    if (this.isCapsLockOn) {
+      this.switchToUpperCase();
+      this.keyboard.classList.add('caps', 'upper');
+      this.isCapsLockOn = true;
+    }
+    this.saveStorageLang();
   }
 }

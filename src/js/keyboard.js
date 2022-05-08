@@ -59,7 +59,7 @@ export default class Keyboard {
    * @param {Boolean} key.repeat - repeated key flag
    */
   keyDown({
-    code, altKey, ctrlKey, shiftKey, repeat,
+    code, altKey, ctrlKey, shiftKey, repeat, event,
   }) {
     if (!code) return;
     const key = this.keys.get(code);
@@ -68,7 +68,7 @@ export default class Keyboard {
       key.keyDown({
         altKey, ctrlKey, shiftKey, repeat,
       });
-      this.keyDownSpecial(key);
+      this.keyDownSpecial({ key, event });
     }
   }
 
@@ -76,7 +76,7 @@ export default class Keyboard {
    * Processing special keys down
    * @param {Object} key - the virtual key (Shift, CapsLock and etc)
    */
-  keyDownSpecial(key) {
+  keyDownSpecial({ key, event }) {
     switch (key.key) {
       case 'Shift':
         this.switchToUpperCase();
@@ -92,6 +92,12 @@ export default class Keyboard {
           this.switchToUpperCase();
           this.keyboard.classList.add('caps', 'upper');
           this.isCapsLockOn = true;
+        }
+        break;
+      case 'Tab':
+        if (event) {
+          event.preventDefault();
+          TextArea.controlInput('Tab');
         }
         break;
       default:
@@ -136,6 +142,7 @@ export default class Keyboard {
       });
       this.keyUpSpecial(key);
     }
+    // TextArea.atctivateTextArea();
   }
 
   /**
@@ -204,7 +211,7 @@ export default class Keyboard {
           break;
         case 'control':
           TextArea.controlInput(code);
-          this.keyDownSpecial(key);
+          this.keyDownSpecial({ key });
           break;
         default:
           break;

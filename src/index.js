@@ -29,7 +29,12 @@ footer.appendChild(hintEnv);
 
 document.addEventListener('keydown', (e) => {
   keyboard.keyDown({
-    code: e.code, altKey: e.altKey, ctrlKey: e.ctrlKey, shiftKey: e.shiftKey, repeat: e.repeat,
+    code: e.code,
+    altKey: e.altKey,
+    ctrlKey: e.ctrlKey,
+    shiftKey: e.shiftKey,
+    repeat: e.repeat,
+    event: e,
   });
 });
 

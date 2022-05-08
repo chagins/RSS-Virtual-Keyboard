@@ -31,6 +31,19 @@ body {
     width: fit-content;
   }
 
+  #textarea {
+    padding: 5px;
+    width: 700px;
+    max-width: 700px;
+    height: 100px;
+    min-height: 100px;
+    display: block;
+    margin: 0 auto;
+    font-size: 12px;
+    border: 1px solid $color-black;
+    border-radius: 5px;
+  }
+
   #keyboard {
     margin: 0 auto;
     padding: 5px;
@@ -40,18 +53,25 @@ body {
     gap: 5px;
   }
 
+  #keyboard.caps {
+    #CapsLock {
+      color: $color-hover;
+      background-color: $color-bkg-hover;
+    }
+  }
+
   .key {
     height: $size-row;
     color: $color-black;
     text-align: center;
     font-size: 12px;
     font-weight: bold;
-    text-transform: capitalize;
     background-color: $color-bkg;
     border: 2px solid $color-black;
     border-radius: 7px;
     cursor: pointer;
     box-shadow: 0 4px #292929;
+    user-select: none;
 
     &:hover {
       color: $color-hover;
@@ -67,6 +87,10 @@ body {
   .key.standard {
     grid-column: span $columns-key-standart;
     font-size: 13px;
+  }
+
+  #keyboard.upper .key.standard {
+    text-transform: capitalize;
   }
 
   .key.medium {

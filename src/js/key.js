@@ -6,14 +6,16 @@ export default class Key {
    * @param {String} key.code - code of key {@link Key#code}
    * @param {String} key.key - label of key
    * @param {String} key.size - size of key (standard|medium|wide|full|space)
+   * @param {String} key.type - type of key (text|control)
    * @param {HTMLElement} key.parentContainer - DOM parent element
    */
   constructor({
-    code, key, size, parentContainer,
+    code, key, size, type, parentContainer,
   }) {
     this.code = code;
     this.key = key;
     this.size = size;
+    this.type = type;
     this.parentContainer = parentContainer;
     this.button = null;
   }

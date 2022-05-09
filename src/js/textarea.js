@@ -56,6 +56,9 @@ export default class TextArea {
       case 'Enter':
         str += '\r\n';
         break;
+      case 'Space':
+        str += ' ';
+        break;
       default:
         break;
     }

@@ -142,7 +142,7 @@ export default class Keyboard {
       });
       this.keyUpSpecial(key);
     }
-    // TextArea.atctivateTextArea();
+    TextArea.atctivateTextArea();
   }
 
   /**
@@ -164,6 +164,7 @@ export default class Keyboard {
       default:
         break;
     }
+    TextArea.atctivateTextArea();
   }
 
   switchLanguage() {

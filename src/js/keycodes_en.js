@@ -187,7 +187,7 @@ export default [
     code: 'Delete',
     key: 'Del',
     size: 'standard',
-    type: 'text',
+    type: 'control',
   },
   {
     code: 'CapsLock',

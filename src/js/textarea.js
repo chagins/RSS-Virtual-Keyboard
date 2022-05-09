@@ -1,5 +1,3 @@
-// import keyCodesObjs from './keycodes';
-
 export default class TextArea {
   static #textarea = null;
 
@@ -34,35 +32,71 @@ export default class TextArea {
    */
   static textInput(symbol) {
     const textArea = TextArea.#textarea;
-    textArea.value += symbol;
+    let str = textArea.value;
+    const start = textArea.selectionStart;
+    const end = textArea.selectionEnd;
+    str = `${str.slice(0, start)}${symbol}${str.slice(end)}`;
+    textArea.value = str;
+    textArea.selectionStart = start + 1;
+    textArea.selectionEnd = start + 1;
   }
 
   /**
    * Allows to use control/edit buttons
-   * @param {String} symbol - control string
+   * @param {String} symbol - control button code
    */
   static controlInput(symbol) {
     const textArea = TextArea.#textarea;
     let str = textArea.value;
+    const start = textArea.selectionStart;
+    const end = textArea.selectionEnd;
     switch (symbol) {
       case 'Backspace':
-        if (str.length > 0) {
-          str = str.slice(0, str.length - 1);
+        if (end === 0) break;
+
+        if (start === end) {
+          str = `${str.slice(0, start - 1)}${str.slice(end)}`;
+          textArea.value = str;
+          textArea.selectionStart = start - 1;
+          textArea.selectionEnd = start - 1;
+        } else {
+          str = `${str.slice(0, start)}${str.slice(end)}`;
+          textArea.value = str;
+          textArea.selectionStart = start;
+          textArea.selectionEnd = start;
         }
         break;
       case 'Tab':
-        str += '\t';
+        str = `${str.slice(0, start)}\t${str.slice(end)}`;
+        textArea.value = str;
+        textArea.selectionStart = start + 1;
+        textArea.selectionEnd = start + 1;
         break;
       case 'Enter':
-        str += '\r\n';
+        str = `${str.slice(0, start)}\r\n${str.slice(end)}`;
+        textArea.value = str;
+        textArea.selectionStart = start + 1;
+        textArea.selectionEnd = start + 1;
         break;
       case 'Space':
-        str += ' ';
+        str = `${str.slice(0, start)} ${str.slice(end)}`;
+        textArea.value = str;
+        textArea.selectionStart = start + 1;
+        textArea.selectionEnd = start + 1;
+        break;
+      case 'Delete':
+        if (start === end) {
+          str = `${str.slice(0, start)}${str.slice(end + 1)}`;
+        } else {
+          str = `${str.slice(0, start)}${str.slice(end)}`;
+        }
+        textArea.value = str;
+        textArea.selectionStart = start;
+        textArea.selectionEnd = start;
         break;
       default:
         break;
     }
-    textArea.value = str;
   }
 
   static getTextArea() {

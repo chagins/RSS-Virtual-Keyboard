@@ -16,7 +16,7 @@ const config = {
   devtool: 'source-map',
   output: {
     filename: 'index.js',
-    clean: true,
+    // clean: true,
     path: path.resolve(__dirname, 'dist'),
   },
   devServer: {
@@ -26,13 +26,9 @@ const config = {
   plugins: [
     new HtmlWebpackPlugin({
       template: './src/index.html',
-      // favicon: './src/assets/favicon.ico',
       title: 'RSS Virtual Keyboard',
     }),
     new ESLintPlugin(),
-    // new MiniCssExtractPlugin({
-    //   filename: '[name].css',
-    // }),
   ],
   module: {
     rules: [
@@ -65,9 +61,6 @@ const config = {
           filename: 'assets/[name][ext]',
         },
       },
-
-      // Add your rules for custom modules here
-      // Learn more about loaders from https://webpack.js.org/loaders/
     ],
   },
 };

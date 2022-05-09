@@ -3,12 +3,37 @@ import keyCodesEn from './keycodes_en';
 import keyCodesRu from './keycodes_ru';
 import TextArea from './textarea';
 
+/** local storage variable for language settings
+ * @constant
+ * @type {string}
+ * @default
+ */
+const LANG_LOCAL_VAR = 'RSS_LANGUAGE';
+
+/** default language for keys
+ * @constant
+ * @type {string}
+ * @default
+ */
+const DEFAULT_LANG = 'EN';
+
+/** keys data arrays for different languages
+ * @constant
+ * @type {object}
+ * @default
+ */
+const KEY_CODES = {
+  EN: keyCodesEn,
+  RU: keyCodesRu,
+};
+
+/** Class represents a virtual keyboard */
 export default class Keyboard {
   /**
-   * Represents a virtual keyboard
+   * initialize a virtual keyboard object
    * @constructor
    * @param {Object} keyboard - the virtual keyboard
-   * @param {String} keyboard.id - DOM element.id
+   * @param {String} keyboard.id - element id
    * @param {HTMLElement} keyboard.parentContainer - DOM parent element
    */
   constructor({ id, parentContainer }) {
@@ -29,54 +54,59 @@ export default class Keyboard {
     keyboard.id = this.id;
     this.parentContainer.appendChild(keyboard);
     this.keyboard = keyboard;
-    this.loadStorageLang();
-    if (this.language === 'EN') this.#createKeys(keyCodesEn);
-    if (this.language === 'RU') this.#createKeys(keyCodesRu);
+    this.loadKeys();
     this.keyboard.addEventListener('mousedown', this.keyVirtualDown.bind(this));
     this.keyboard.addEventListener('mouseup', this.keyVirtualUp.bind(this));
     return keyboard;
   }
 
-  loadStorageLang() {
-    if (localStorage.getItem('RSS_LANGUAGE')) {
-      this.language = localStorage.getItem('RSS_LANGUAGE');
-    } else {
-      this.language = 'EN';
-    }
-  }
-
-  saveStorageLang() {
-    localStorage.setItem('RSS_LANGUAGE', this.language);
-  }
-
   /**
    * Call a virtual button press from physical button
-   * @param {Object} key - the virtual key
-   * @param {String} key.code - key code
-   * @param {Boolean} key.altKey - ALT key flag
-   * @param {Boolean} key.ctrlKey - CTRL key flag
-   * @param {Boolean} key.shiftKey - SHIFT key flag
-   * @param {Boolean} key.repeat - repeated key flag
+   * @event document#keydown - keyboard keydown event
    */
-  keyDown({
-    code, altKey, ctrlKey, shiftKey, repeat, event,
-  }) {
-    if (!code) return;
-    const key = this.keys.get(code);
+  keyDown({ event }) {
+    if (!event.code) return;
+    const key = this.keys.get(event.code);
     if (key) {
-      TextArea.atctivateTextArea();
+      TextArea.activateTextArea();
       key.keyDown({
-        altKey, ctrlKey, shiftKey, repeat,
+        altKey: event.altKey,
+        ctrlKey: event.ctrlKey,
+        shiftKey: event.shiftKey,
+        repeat: event.repeat,
       });
-      this.keyDownSpecial({ key, event });
+      if (key.type === 'control') {
+        this.keyDownControl({ key, event });
+      }
     }
   }
 
   /**
-   * Processing special keys down
+   * Call a virtual button up from physical button
+   * @event document#keyup - keyboard keyup event
+   */
+  keyUp({ event }) {
+    if (!event.code) return;
+
+    const key = this.keys.get(event.code);
+    if (key) {
+      key.keyUp({
+        altKey: event.altKey,
+        ctrlKey: event.ctrlKey,
+        shiftKey: event.shiftKey,
+      });
+      if (key.type === 'control') {
+        this.keyUpControl({ key, event });
+      }
+    }
+    TextArea.activateTextArea();
+  }
+
+  /**
+   * Processing control keys down
    * @param {Object} key - the virtual key (Shift, CapsLock and etc)
    */
-  keyDownSpecial({ key, event }) {
+  keyDownControl({ key, event }) {
     switch (key.key) {
       case 'Shift':
         this.switchToUpperCase();
@@ -105,51 +135,11 @@ export default class Keyboard {
     }
   }
 
-  switchToUpperCase() {
-    this.keys.forEach((value, key) => {
-      const btnKey = this.keys.get(key);
-      if (btnKey.type === 'text') {
-        btnKey.key = btnKey.key.toUpperCase();
-      }
-    });
-  }
-
-  switchOnShiftKeys() {
-    this.keys.forEach((value, key) => {
-      const btnKey = this.keys.get(key);
-      if (btnKey.shiftAnalogue) {
-        btnKey.button.innerText = btnKey.shiftAnalogue;
-      }
-    });
-  }
-
   /**
-   * Call a virtual button up from physical button
-   * @param {Object} key - the virtual key
-   * @param {String} key.code - key code
-   * @param {Boolean} key.altKey - ALT key flag
-   * @param {Boolean} key.ctrlKey - CTRL key flag
-   * @param {Boolean} key.shiftKey - SHIFT key flag
-   */
-  keyUp({
-    code, altKey, ctrlKey, shiftKey,
-  }) {
-    if (!code) return;
-    const key = this.keys.get(code);
-    if (key) {
-      key.keyUp({
-        altKey, ctrlKey, shiftKey,
-      });
-      this.keyUpSpecial(key);
-    }
-    TextArea.atctivateTextArea();
-  }
-
-  /**
-   * Processing special keys up
+   * Processing control keys up
    * @param {Object} key - the virtual key (Shift, CapsLock and etc)
    */
-  keyUpSpecial(key) {
+  keyUpControl({ key }) {
     switch (key.key) {
       case 'Shift':
         this.switchToLowerCase();
@@ -164,42 +154,13 @@ export default class Keyboard {
       default:
         break;
     }
-    TextArea.atctivateTextArea();
+    TextArea.activateTextArea();
   }
 
-  switchLanguage() {
-    switch (this.language) {
-      case 'EN':
-        this.language = 'RU';
-        this.#createKeys(keyCodesRu);
-        break;
-      case 'RU':
-        this.language = 'EN';
-        this.#createKeys(keyCodesEn);
-        break;
-      default:
-        break;
-    }
-  }
-
-  switchToLowerCase() {
-    this.keys.forEach((value, key) => {
-      const btnKey = this.keys.get(key);
-      if (btnKey.type === 'text') {
-        btnKey.key = btnKey.key.toLowerCase();
-      }
-    });
-  }
-
-  switchOffShiftKeys() {
-    this.keys.forEach((value, key) => {
-      const btnKey = this.keys.get(key);
-      if (btnKey.shiftAnalogue) {
-        btnKey.button.innerText = btnKey.key;
-      }
-    });
-  }
-
+  /**
+   * Call a virtual button press from mouse
+   * @event document#mousedown - mouse mousedown event
+   */
   keyVirtualDown(event) {
     const code = event.target.id;
     if (!code) return;
@@ -212,7 +173,7 @@ export default class Keyboard {
           break;
         case 'control':
           TextArea.controlInput(code);
-          this.keyDownSpecial({ key });
+          this.keyDownControl({ key });
           break;
         default:
           break;
@@ -220,6 +181,10 @@ export default class Keyboard {
     }
   }
 
+  /**
+   * Call a virtual button up from mouse
+   * @event document#mouseup - mouse mouseup event
+   */
   keyVirtualUp(event) {
     const code = event.target.id;
     if (!code) return;
@@ -231,7 +196,7 @@ export default class Keyboard {
           break;
         case key.type:
           key.keyUp({});
-          this.keyUpSpecial(key);
+          this.keyUpControl(key);
           break;
         default:
           break;
@@ -239,11 +204,102 @@ export default class Keyboard {
     }
   }
 
-  #createKeys(keyCodesLang) {
-    const keyCodes = keyCodesLang;
+  /**
+   * Switch keyboard keys to upper case
+   */
+  switchToUpperCase() {
+    this.keys.forEach((value, key) => {
+      const btnKey = this.keys.get(key);
+      if (btnKey.type === 'text') {
+        btnKey.key = btnKey.key.toUpperCase();
+      }
+    });
+  }
+
+  /**
+   * Switch keyboard keys to lower case
+   */
+  switchToLowerCase() {
+    this.keys.forEach((value, key) => {
+      const btnKey = this.keys.get(key);
+      if (btnKey.type === 'text') {
+        btnKey.key = btnKey.key.toLowerCase();
+      }
+    });
+  }
+
+  /**
+   * Show shift analogue keyboard keys
+   */
+  switchOnShiftKeys() {
+    this.keys.forEach((value, key) => {
+      const btnKey = this.keys.get(key);
+      if (btnKey.shiftAnalogue) {
+        btnKey.button.innerText = btnKey.shiftAnalogue;
+      }
+    });
+  }
+
+  /**
+   * Hide shift analogue keyboard keys
+   */
+  switchOffShiftKeys() {
+    this.keys.forEach((value, key) => {
+      const btnKey = this.keys.get(key);
+      if (btnKey.shiftAnalogue) {
+        btnKey.button.innerText = btnKey.key;
+      }
+    });
+  }
+
+  /**
+   * Switch language keys
+   */
+  switchLanguage() {
+    switch (this.language) {
+      case 'EN':
+        this.language = 'RU';
+        break;
+      case 'RU':
+        this.language = 'EN';
+        break;
+      default:
+        break;
+    }
+    this.createKeys(KEY_CODES[this.language]);
+  }
+
+  /**
+   * Load storage settings and run key's creation
+   */
+  loadKeys() {
+    if (localStorage.getItem(LANG_LOCAL_VAR)) {
+      this.language = localStorage.getItem(LANG_LOCAL_VAR);
+    }
+
+    if (this.language in KEY_CODES) {
+      this.createKeys(KEY_CODES[this.language]);
+    } else {
+      this.language = DEFAULT_LANG;
+      this.createKeys(KEY_CODES[this.language]);
+    }
+  }
+
+  /**
+   * Save storage settings
+   */
+  saveKeys() {
+    localStorage.setItem(LANG_LOCAL_VAR, this.language);
+  }
+
+  /**
+   * Create keyboard keys
+   * @param {String} keyCodesLang - array with keys language data
+   */
+  createKeys(keyCodesLang) {
     this.keys.clear();
     this.keyboard.innerHTML = '';
-    keyCodes.forEach((item) => {
+    keyCodesLang.forEach((item) => {
       const key = new Key({
         code: item.code,
         key: item.key,
@@ -260,6 +316,6 @@ export default class Keyboard {
       this.keyboard.classList.add('caps', 'upper');
       this.isCapsLockOn = true;
     }
-    this.saveStorageLang();
+    this.saveKeys();
   }
 }

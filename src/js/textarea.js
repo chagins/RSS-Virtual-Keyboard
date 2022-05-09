@@ -4,12 +4,14 @@ export default class TextArea {
   static #self = null;
 
   /**
-   * Represents a textarea
+   * Represents a text area
    * @constructor
    * @param {Object} textarea - the textarea element
+   * @param {String} textarea.id - element id
    * @param {HTMLElement} textarea.parentContainer - DOM parent element
    */
-  constructor({ parentContainer }) {
+  constructor({ id, parentContainer }) {
+    this.id = id;
     this.parentContainer = parentContainer;
     TextArea.#self = this;
   }
@@ -20,7 +22,7 @@ export default class TextArea {
    */
   create() {
     TextArea.#textarea = document.createElement('textarea');
-    TextArea.#textarea.id = 'textarea';
+    TextArea.#textarea.id = this.id;
     TextArea.#textarea.autofocus = true;
     this.parentContainer.appendChild(TextArea.#textarea);
     return TextArea.#textarea;
@@ -107,7 +109,7 @@ export default class TextArea {
     return TextArea.#self;
   }
 
-  static atctivateTextArea() {
+  static activateTextArea() {
     TextArea.#textarea.focus();
   }
 }

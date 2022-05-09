@@ -8,10 +8,10 @@ const container = document.createElement('div');
 container.id = 'container';
 document.body.appendChild(container);
 
-const page = new Page(container);
+const page = new Page({ parentContainer: container });
 const { main, footer } = page.create();
 
-const textArea = new TextArea({ parentContainer: main });
+const textArea = new TextArea({ id: 'textarea', parentContainer: main });
 textArea.create();
 
 const keyboard = new Keyboard({ id: 'keyboard', parentContainer: main });
@@ -27,19 +27,17 @@ hintEnv.id = 'hintenv';
 hintEnv.innerText = 'The keyboard was made on ⊞ Windows 11.';
 footer.appendChild(hintEnv);
 
+const hintDiscord = document.createElement('p');
+hintDiscord.id = 'hintDiscord';
+hintDiscord.innerHTML = 'Please,'
+  + '👉<a href="https://discordapp.com/users/878959404060405801">DISCORD</a> '
+  + 'me if you find any errors.';
+footer.appendChild(hintDiscord);
+
 document.addEventListener('keydown', (e) => {
-  keyboard.keyDown({
-    code: e.code,
-    altKey: e.altKey,
-    ctrlKey: e.ctrlKey,
-    shiftKey: e.shiftKey,
-    repeat: e.repeat,
-    event: e,
-  });
+  keyboard.keyDown({ event: e });
 });
 
 document.addEventListener('keyup', (e) => {
-  keyboard.keyUp({
-    code: e.code, altKey: e.altKey, ctrlKey: e.ctrlKey, shiftKey: e.shiftKey,
-  });
+  keyboard.keyUp({ event: e });
 });

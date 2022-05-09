@@ -4,8 +4,8 @@ export default class Page {
    * @constructor
    * @param {HTMLDivElement} container - DOM parent div element
    */
-  constructor(container) {
-    this.container = container;
+  constructor({ parentContainer }) {
+    this.parentContainer = parentContainer;
   }
 
   /**
@@ -15,7 +15,7 @@ export default class Page {
   create() {
     const header = document.createElement('header');
     header.id = 'header';
-    this.container.appendChild(header);
+    this.parentContainer.appendChild(header);
 
     const title = document.createElement('h1');
     title.id = 'title';
@@ -24,11 +24,11 @@ export default class Page {
 
     const main = document.createElement('main');
     main.id = 'main';
-    this.container.appendChild(main);
+    this.parentContainer.appendChild(main);
 
     const footer = document.createElement('footer');
     footer.id = 'footer';
-    this.container.appendChild(footer);
+    this.parentContainer.appendChild(footer);
 
     return {
       header, title, main, footer,

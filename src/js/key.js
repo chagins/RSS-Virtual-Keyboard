@@ -7,7 +7,7 @@ export default class Key {
    * @param {String} key.key - label of key
    * @param {String} key.size - size of key (standard|medium|wide|full|space)
    * @param {String} key.type - type of key (text|control)
-   * @param {String} key.shiftKey - key shift analogue (text|control)
+   * @param {String} key.shiftAnalogue - key shift analogue (text|control)
    * @param {HTMLElement} key.parentContainer - DOM parent element
    */
   constructor({

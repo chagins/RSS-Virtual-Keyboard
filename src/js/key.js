@@ -19,6 +19,7 @@ export default class Key {
     this.type = type;
     this.shiftAnalogue = shiftAnalogue;
     this.parentContainer = parentContainer;
+    this.backupKey = key;
     this.button = null;
   }
 

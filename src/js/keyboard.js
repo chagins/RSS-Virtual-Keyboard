@@ -68,16 +68,9 @@ export default class Keyboard {
     if (!event.code) return;
     const key = this.keys.get(event.code);
     if (key) {
+      event.preventDefault();
       TextArea.activateTextArea();
-      key.keyDown({
-        altKey: event.altKey,
-        ctrlKey: event.ctrlKey,
-        shiftKey: event.shiftKey,
-        repeat: event.repeat,
-      });
-      if (key.type === 'control') {
-        this.keyDownControl({ key, event });
-      }
+      this.keyVirtualDown(event);
     }
   }
 
@@ -87,19 +80,12 @@ export default class Keyboard {
    */
   keyUp({ event }) {
     if (!event.code) return;
-
     const key = this.keys.get(event.code);
     if (key) {
-      key.keyUp({
-        altKey: event.altKey,
-        ctrlKey: event.ctrlKey,
-        shiftKey: event.shiftKey,
-      });
-      if (key.type === 'control') {
-        this.keyUpControl({ key, event });
-      }
+      event.preventDefault();
+      TextArea.activateTextArea();
+      this.keyVirtualUp(event);
     }
-    TextArea.activateTextArea();
   }
 
   /**
@@ -162,11 +148,21 @@ export default class Keyboard {
    * @event document#mousedown - mouse mousedown event
    */
   keyVirtualDown(event) {
-    const code = event.target.id;
+    let code = null;
+    if (event.type === 'mousedown') {
+      code = event.target.id;
+    } else if (event.type === 'keydown') {
+      code = event.code;
+    }
     if (!code) return;
     const key = this.keys.get(code);
     if (key) {
-      key.keyDown({});
+      key.keyDown({
+        altKey: event.altKey,
+        ctrlKey: event.ctrlKey,
+        shiftKey: event.shiftKey,
+        repeat: event.repeat,
+      });
       switch (key.type) {
         case 'text':
           TextArea.textInput(key.key);
@@ -186,22 +182,32 @@ export default class Keyboard {
    * @event document#mouseup - mouse mouseup event
    */
   keyVirtualUp(event) {
-    const code = event.target.id;
+    let code = null;
+    if (event.type === 'mouseup') {
+      code = event.target.id;
+    } else if (event.type === 'keyup') {
+      code = event.code;
+    }
     if (!code) return;
     const key = this.keys.get(code);
     if (key) {
+      key.keyUp({
+        altKey: event.altKey,
+        ctrlKey: event.ctrlKey,
+        shiftKey: event.shiftKey,
+      });
       switch (key.type) {
         case 'lang':
           this.switchLanguage();
           break;
-        case key.type:
-          key.keyUp({});
-          this.keyUpControl(key);
+        case 'control':
+          this.keyUpControl({ key });
           break;
         default:
           break;
       }
     }
+    TextArea.activateTextArea();
   }
 
   /**
@@ -236,6 +242,8 @@ export default class Keyboard {
       const btnKey = this.keys.get(key);
       if (btnKey.shiftAnalogue) {
         btnKey.button.innerText = btnKey.shiftAnalogue;
+        // btnKey.backupKey = btnKey.key;
+        btnKey.key = btnKey.shiftAnalogue;
       }
     });
   }
@@ -247,6 +255,7 @@ export default class Keyboard {
     this.keys.forEach((value, key) => {
       const btnKey = this.keys.get(key);
       if (btnKey.shiftAnalogue) {
+        btnKey.key = btnKey.backupKey;
         btnKey.button.innerText = btnKey.key;
       }
     });
@@ -294,7 +303,7 @@ export default class Keyboard {
 
   /**
    * Create keyboard keys
-   * @param {String} keyCodesLang - array with keys language data
+   * @param {Array} keyCodesLang - array with keys language data
    */
   createKeys(keyCodesLang) {
     this.keys.clear();

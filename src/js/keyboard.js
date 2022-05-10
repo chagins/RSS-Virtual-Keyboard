@@ -92,7 +92,7 @@ export default class Keyboard {
    * Processing control keys down
    * @param {Object} key - the virtual key (Shift, CapsLock and etc)
    */
-  keyDownControl({ key, event }) {
+  keyDownControl({ key /* , event */ }) {
     switch (key.key) {
       case 'Shift':
         this.switchToUpperCase();
@@ -108,12 +108,6 @@ export default class Keyboard {
           this.switchToUpperCase();
           this.keyboard.classList.add('caps', 'upper');
           this.isCapsLockOn = true;
-        }
-        break;
-      case 'Tab':
-        if (event) {
-          event.preventDefault();
-          TextArea.controlInput('Tab');
         }
         break;
       default:

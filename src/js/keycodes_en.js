@@ -342,7 +342,7 @@ export default [
     code: 'ArrowUp',
     key: '▲',
     size: 'standard',
-    type: 'text',
+    type: 'control',
   },
   {
     code: 'ShiftRight',
@@ -390,19 +390,19 @@ export default [
     code: 'ArrowLeft',
     key: '◀',
     size: 'standard',
-    type: 'text',
+    type: 'control',
   },
   {
     code: 'ArrowDown',
     key: '▼',
     size: 'standard',
-    type: 'text',
+    type: 'control',
   },
   {
     code: 'ArrowRight',
     key: '▶',
     size: 'standard',
-    type: 'text',
+    type: 'control',
   },
   {
     code: 'ControlRight',

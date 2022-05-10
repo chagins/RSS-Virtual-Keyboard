@@ -1,7 +1,7 @@
 export default class TextArea {
   static #textarea = null;
 
-  static #self = null;
+  static self = null;
 
   /**
    * Represents a text area
@@ -13,7 +13,7 @@ export default class TextArea {
   constructor({ id, parentContainer }) {
     this.id = id;
     this.parentContainer = parentContainer;
-    TextArea.#self = this;
+    TextArea.self = this;
   }
 
   /**
@@ -96,6 +96,61 @@ export default class TextArea {
         textArea.selectionStart = start;
         textArea.selectionEnd = start;
         break;
+      case 'ArrowLeft':
+        textArea.selectionStart = start - 1;
+        textArea.selectionEnd = start - 1;
+        break;
+      case 'ArrowRight':
+        if (str.length === start && start === end) {
+          textArea.selectionStart = 0;
+          textArea.selectionEnd = textArea.selectionStart;
+        } else {
+          textArea.selectionStart = start + 1;
+          textArea.selectionEnd = start + 1;
+        }
+        break;
+      case 'ArrowUp':
+        (() => {
+          const linesCount = (str.slice(0, start).match(/\n/g) || []).length + 1;
+          if (linesCount < 2) {
+            TextArea.controlInput('ArrowLeft');
+            return;
+          }
+          const brakeCurrent = str.slice(0, start).lastIndexOf('\n');
+          const diffCurrent = start - brakeCurrent - 1;
+          const brakePrev = str.slice(0, brakeCurrent).lastIndexOf('\n');
+          const diffPrev = brakeCurrent - brakePrev - 1;
+          if (diffPrev < diffCurrent) {
+            textArea.selectionStart = brakeCurrent;
+            textArea.selectionEnd = textArea.selectionStart;
+          } else {
+            textArea.selectionStart = brakePrev + diffCurrent + 1;
+            textArea.selectionEnd = textArea.selectionStart;
+          }
+        })();
+        break;
+      case 'ArrowDown':
+        (() => {
+          const linesCount = (str.slice(start).match(/\n/g) || []).length + 1;
+          if (linesCount < 2) {
+            TextArea.controlInput('ArrowRight');
+            return;
+          }
+          const brakeCurrent = str.slice(0, start).lastIndexOf('\n');
+          const diffCurrent = start - brakeCurrent - 1;
+          const brakeNext = str.indexOf('\n', start);
+          let brakeEnd = str.indexOf('\n', brakeNext + 1);
+          if (brakeEnd === -1) brakeEnd = str.length;
+          const diffNext = brakeEnd - brakeNext - 1;
+          if (diffNext < diffCurrent) {
+            textArea.selectionStart = brakeEnd;
+            textArea.selectionEnd = textArea.selectionStart;
+          } else {
+            textArea.selectionStart = brakeNext + diffCurrent + 1;
+            textArea.selectionEnd = textArea.selectionStart;
+          }
+        })();
+        break;
       default:
         break;
     }
@@ -106,7 +161,7 @@ export default class TextArea {
   }
 
   static getSelf() {
-    return TextArea.#self;
+    return TextArea.self;
   }
 
   static activateTextArea() {

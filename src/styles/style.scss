@@ -1,0 +1,135 @@
+@import "normalize.scss";
+@import "reset.scss";
+@import "fonts.scss";
+@import "dimensions.scss";
+
+body {
+  padding: 5px;
+}
+
+#container {
+  margin: 0 auto;
+  padding: 5px;
+  max-width: 768px;
+  height: fit-content;
+  font-family: 'Roboto Mono';
+  font-size:16px;
+  border: 3px solid $color-black;
+  border-radius: 10px;
+  -webkit-box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
+  -moz-box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
+  box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
+
+  #title {
+    text-align: center;
+    font-weight: normal;
+    font-size:20px;
+  }
+
+  #main {
+    margin: 0 auto;
+    width: fit-content;
+  }
+
+  #textarea {
+    padding: 5px;
+    width: 700px;
+    max-width: 700px;
+    height: 100px;
+    min-height: 100px;
+    display: block;
+    margin: 0 auto;
+    font-size: 12px;
+    border: 1px solid $color-black;
+    border-radius: 5px;
+  }
+
+  #keyboard {
+    margin: 0 auto;
+    padding: 5px;
+    display: grid;
+    grid-template-columns: repeat(47, $size-column);
+    grid-template-rows: repeat(5, $size-row);
+    gap: 5px;
+  }
+
+  #keyboard.caps {
+    #CapsLock {
+      color: $color-hover;
+      background-color: $color-bkg-hover;
+    }
+  }
+
+  .key {
+    height: $size-row;
+    color: $color-black;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+    background-color: $color-bkg;
+    border: 2px solid $color-black;
+    border-radius: 7px;
+    cursor: pointer;
+    box-shadow: 0 4px #292929;
+    user-select: none;
+
+    &:hover {
+      color: $color-hover;
+      background-color: $color-bkg-hover;
+    }
+
+    &.active {
+      box-shadow: 0 1px $color-shadow;
+      transform: translateY(3px);
+    }
+  }
+
+  .key.standard {
+    grid-column: span $columns-key-standart;
+    font-size: 13px;
+  }
+
+  #keyboard.upper .key.standard {
+    text-transform: capitalize;
+  }
+
+  .key.medium {
+    grid-column: span $columns-key-medium;
+  }
+
+  .key.double {
+    grid-column: span $columns-key-double;
+  }
+
+  .key.wide {
+    grid-column: span $columns-key-wide;
+  }
+
+  .key.space {
+    grid-column: span $columns-key-space;
+  }
+
+  #footer {
+    padding: 10px 0 5px;
+    margin: 0 auto;
+    width: 700px;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    font-size: 12px;
+    line-height: 16px;
+    text-align: justify;
+  }
+
+  #hintDiscord {
+    align-self: flex-end;
+    position: relative;
+
+    a {
+      text-decoration: underline;
+    }
+  }
+}
+
+
+

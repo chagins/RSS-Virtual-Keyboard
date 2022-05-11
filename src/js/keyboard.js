@@ -95,9 +95,15 @@ export default class Keyboard {
   keyDownControl({ key /* , event */ }) {
     switch (key.key) {
       case 'Shift':
-        this.switchToUpperCase();
-        this.keyboard.classList.add('upper');
-        this.switchOnShiftKeys();
+        if (this.isCapsLockOn) {
+          this.switchToLowerCase();
+          this.keyboard.classList.remove('upper');
+          this.switchOnShiftKeys();
+        } else {
+          this.switchToUpperCase();
+          this.keyboard.classList.add('upper');
+          this.switchOnShiftKeys();
+        }
         break;
       case 'CapsLock':
         if (this.isCapsLockOn) {
@@ -122,9 +128,15 @@ export default class Keyboard {
   keyUpControl({ key }) {
     switch (key.key) {
       case 'Shift':
-        this.switchToLowerCase();
-        this.keyboard.classList.remove('upper');
-        this.switchOffShiftKeys();
+        if (this.isCapsLockOn) {
+          this.switchOffShiftKeys();
+          this.keyboard.classList.add('upper');
+          this.switchToUpperCase();
+        } else {
+          this.switchToLowerCase();
+          this.keyboard.classList.remove('upper');
+          this.switchOffShiftKeys();
+        }
         break;
       case 'Alt':
         if (key.ctrlKey) {
